@@ -3,6 +3,8 @@ import {ApiError} from "../utils/ApiError.js"
 import {User} from "../models/user.model.js"
 import {uploadOnCloudinary} from "../utils/cloudinary.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
+import jwt from "json-web-token"
+import mongoose from "mongoose";
 
 const registerUser = asyncHandler( async (req,res)=>{
     // get user details from frontend
@@ -24,16 +26,16 @@ const registerUser = asyncHandler( async (req,res)=>{
         throw new ApiError(400, "All Fields are compulsory")
     }
 
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{ username },{ email }]
     })
     if(existedUser){
         throw new ApiError(409, "User already exists")
     }
-
+    console.log(req.files);
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverimageLocalPath =  req.files?.coverImage[0].path
-
+    //const coverimageLocalPath =  req.files?.coverImage[0].path
+    let coverimageLocalPath;
     if(!avatarLocalPath){
         throw new ApiError(400,"Avatar file is required")
     }
@@ -66,6 +68,15 @@ const registerUser = asyncHandler( async (req,res)=>{
 
 })
 
+const loginUser  = asyncHandler(async (req,res)=>{
+    //req body -> data
+    //username or email is there
+    //find user
+    //if not throw error
+    //password check
+    //access and refresh token 
+})
 export {
-    registerUser
+    registerUser,
+    loginUser
 }
